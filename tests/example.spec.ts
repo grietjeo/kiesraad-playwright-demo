@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { LoginPage } from './pages/loginPage';
 
 
 test.describe('User can buy products from the shop', async() => {
@@ -10,11 +11,9 @@ test.describe('User can buy products from the shop', async() => {
   for (const { article } of articles) {
     test(`User can buy a ${article}`, async ({ page }) => {
 
-  await page.goto('https://www.saucedemo.com/');
-
-  await page.getByPlaceholder('Username').fill('standard_user');
-  await page.getByPlaceholder('Password').fill('secret_sauce');
-  await page.getByRole('button', { name: 'Login' }).click();
+      var loginPage = new LoginPage(page);
+      await loginPage.open();
+      await loginPage.loginAs('standard_user', 'secret_sauce');
 
   await expect(page.getByTestId('shopping-cart-link')).toBeVisible();
 
@@ -29,8 +28,10 @@ test.describe('User can buy products from the shop', async() => {
   await page.getByPlaceholder('First Name').fill('Grietje');
   await page.getByPlaceholder('Last Name').fill('Ogink');
   await page.getByPlaceholder('Zip/Postal Code').fill('1234');
+
   await page.getByRole('button', { name: 'Continue' }).click();
   await page.getByTestId('finish').click();
+
   await expect(page.getByText('Thank you for your order!')).toBeVisible();
 });
   }
