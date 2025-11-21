@@ -40,7 +40,7 @@ test('User can buy a Sauce Labs Bike light', async ({ page }) => {
 
   await expect(page.getByTestId('shopping-cart-link')).toBeVisible();
 
-  await page.getByText('Sauce Labs Bike Light').click();
+  await page.getByText('Sauce Labs Koffie').click();
   await expect(page.getByTestId('back-to-products')).toBeVisible();
 
   await page.getByText('Add to cart').click();
