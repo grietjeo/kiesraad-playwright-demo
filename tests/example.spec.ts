@@ -1,37 +1,46 @@
 import { test, expect } from '@playwright/test';
 import { LoginPage } from './pages/loginPage';
+import { ProductOverviewPage } from './pages/productOverviewPage';
+import { AddProductPage } from './pages/addProductPage';
+import { ShoppingcartPage } from './pages/shoppingcartPage';
+import { CheckoutPage } from './pages/checkoutPage';
 
 
 test.describe('User can buy products from the shop', async() => {
 
-  const articles = [
-    { article: 'Sauce Labs Backpack' },
-    { article: 'Sauce Labs Bike Light' }
+  const products = [
+    { product: 'Sauce Labs Backpack' },
+    { product: 'Sauce Labs Bike Light' }
   ]
-  for (const { article } of articles) {
-    test(`User can buy a ${article}`, async ({ page }) => {
+  for (const { product } of products) {
+    test(`User can buy a ${product}`, async ({ page }) => {
 
+      // Login
       var loginPage = new LoginPage(page);
       await loginPage.open();
       await loginPage.loginAs('standard_user', 'secret_sauce');
 
-  await expect(page.getByTestId('shopping-cart-link')).toBeVisible();
 
-  await page.getByText(article).click();
-  await expect(page.getByTestId('back-to-products')).toBeVisible();
+      //product overview
+      await new ProductOverviewPage(page).selectProduct(product);
 
-  await page.getByText('Add to cart').click();
-  await page.getByTestId('shopping-cart-link').click();
-  await expect(page.getByTestId('checkout')).toBeVisible();
+      //product detail
+      await new AddProductPage(page).addProduct(product);
 
-  await page.getByTestId('checkout').click();
-  await page.getByPlaceholder('First Name').fill('Grietje');
-  await page.getByPlaceholder('Last Name').fill('Ogink');
-  await page.getByPlaceholder('Zip/Postal Code').fill('1234');
 
-  await page.getByRole('button', { name: 'Continue' }).click();
-  await page.getByTestId('finish').click();
+  //shopping cart
 
+  await new ShoppingcartPage(page).CheckoutProduct();
+
+  //checkout
+
+
+  await new CheckoutPage(page).fillDetails('Grietje', 'Ogink', '1234');
+
+
+ 
+
+  //confirmation
   await expect(page.getByText('Thank you for your order!')).toBeVisible();
 });
   }
